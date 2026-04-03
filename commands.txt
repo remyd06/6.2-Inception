@@ -1,0 +1,21 @@
+// docker compose ps
+docker ps
+
+// acces to another false port
+curl https://localhost
+
+// check the tls v1.2/1.3 nginx
+curl -kv https://localhost 2>&1 | grep "TLS\|SSL"
+
+// check the right path volumes
+docker volume ls
+docker volume inspect inception_db_data
+docker volume inspect inception_wp_data
+
+// acces admin console
+https://localhost/wp-admin
+
+// acces mariadb
+docker exec -it mariadb mariadb -u root -p123
+USE wordpress
+SHOW TABLES;
