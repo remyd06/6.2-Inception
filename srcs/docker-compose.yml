@@ -1,0 +1,81 @@
+services:
+    mariadb:
+        container_name: mariadb
+        image: mariadb
+        build:
+            context: requirements/MariaDB
+            dockerfile: Dockerfile
+        env_file:
+            - .env
+        environment:
+            - SQL_DATABASE
+            - SQL_USER
+            - SQL_PASSWORD
+            - SQL_ROOT_PASSWORD
+        volumes:
+            - db_data:/var/lib/mysql
+        restart: unless-stopped
+        expose:
+            - "3306"
+        networks:
+            - networkInception
+
+    wordpress:
+        container_name: wordpress
+        image: wordpress
+        build:
+            context: requirements/WordPress
+            dockerfile: Dockerfile
+        depends_on:
+            - mariadb
+        env_file:
+            - .env
+        environment:
+            - WORDPRESS_URL
+            - WORDPRESS_ADMIN_USER
+            - WORDPRESS_ADMIN_PASS
+            - WORDPRESS_ADMIN_EMAIL
+            - WORDPRESS_USER
+            - WORDPRESS_USER_PASS
+            - WORDPRESS_USER_EMAIL
+        volumes:
+            - wp_data:/var/www/html
+        restart: unless-stopped
+        expose:
+            - "9000"
+        networks:
+            - networkInception
+
+    nginx:
+        container_name: nginx
+        image: nginx
+        build:
+            context: requirements/NGINX
+            dockerfile: Dockerfile
+        depends_on:
+            - wordpress
+        volumes:
+            - wp_data:/var/www/html:ro
+        ports:
+            - "443:443"
+        restart: unless-stopped
+        networks:
+            - networkInception
+
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${USERNAME}/data/db_data
+  wp_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${USERNAME}/data/wp_data
+
+networks:
+    networkInception:
+        driver: bridge
