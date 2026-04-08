@@ -50,6 +50,7 @@ mariadb_stop:
 mariadb_enter:
 		docker exec -it mariadb mysql -u root -p
 
+# ========================= #
 # ---- Debug WordPress ---- #
 # ========================= #
 
@@ -63,6 +64,7 @@ wordpress_stop:
 		docker stop wordpress_debug || true
 		docker rm wordpress_debug || true
 
+# ===================== #
 # ---- Debug NGINX ---- #
 # ===================== #
 
